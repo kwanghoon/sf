@@ -1,0 +1,6 @@
+
+Constructive logic : 건설적 논리
+Big-step/small-step semantics : 큰 걸음 스타일/작은 걸음 스타일 의미 구조
+
+
+
