@@ -1,0 +1,1800 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>Basics_ko_utf8</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library Basics_ko_utf8</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+<a name="lab1"></a><h1 class="section">기초: 콕 기반 함수형 프로그래밍</h1>
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab2"></a><h1 class="section">서론</h1>
+
+<div class="paragraph"> </div>
+
+ 함수형 프로그래밍 스타일은 간단한, 매일 사용하는 수학적 직관에
+    기반한다.  프로시저와 메서드가 부작용이 없다면 효율성을 무시한다면
+    입력을 어떻게 출력으로 연결하는지에 대해서만 이해하면 되기
+    때문이다. 즉, 마치 프로시저와 메서드를 수학 함수를 계산하는
+    구체적인 방법처럼 이해할 수 있다. 이것이 "함수형 프로그래밍"에서
+    단어 "함수형"이 뜻하는 바이다. 프로그램들과 단순한 수학적 객체들을
+    직접 연결해서 해석하는 것이 프로그램 동작에 대한 정확성을
+    형식적으로 증명하고 비형식적으로 건전하게 추론하는데 도움이 된다.
+
+<div class="paragraph"> </div>
+
+    함수형 프로그래밍에서 "함수형"은 함수들(또는 메서드들)을
+    <i>1등급(first-class)_ 값들로 사용하는 것을 강조한다는 의미로도
+    사용한다. 1등급 값이란 다른 함수들의 인자로 전달될 수 있고, 결과로
+    반환되고, 자료 구조 안에도 저장할 수 있는 값이라는 뜻이다. 함수들을
+    데이터로 다루면 많은 유용하고 강력한 프로그래밍 방법들을 만들 수
+    있다.
+
+<div class="paragraph"> </div>
+
+    함수형 언어들의 다른 공통 특징들 _대수적 자료형들_과 _패턴 매칭_
+    등이 있는데 이런 특징들을 활용하면 다양한 자료 구조들을 쉽게 만들고
+    다룰 수 있다. 정교한 _다형 타입 시스템들_을 통해 추상화와 코드
+    재사용을 지원하기도 한다. 콕은 이 특징들을 모두 제공한다.
+
+<div class="paragraph"> </div>
+
+    이 장의 앞부분은 콕의 함수형 프로그래밍 언어 _갈리나(Gallina)_의
+    가장 중요한 요소들을 소개한다. 뒷부분은 콕 프로그램들의 성질들을
+    증명하는 데 사용할 수 있는 몇 가지 기초적인 _전술들(tactics)_을
+    소개한다. 
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab3"></a><h1 class="section">열거타입</h1>
+
+<div class="paragraph"> </div>
+
+ 콕은 내장된 특징들의 수가 _극도로_ 적다는 점이 주목할만한
+    점이다. 예를 들어, 콕은 일반적인 기본 타입들(부울 타입, 정수 타입,
+    문자열 타입 등)을 제공하는 대신 처음부터 새로운 자료형들을 정의하는
+    강력한 방법을 제공하여 모든 이 기본 타입들을 정의할 수 있도록 한다.
+
+<div class="paragraph"> </div>
+
+    당연히 콕에 부울, 정수와 리스트, 해쉬 테이블과 같은 많은 공통 자료
+    구조들을 제공하는 방대한 표준 라이브러리를 포함시켜
+    배포한다. 그러나 이 라이브러리 정의들에 특별한 것이나 기초 연산자가
+    있는 것은 아니다. 이 점을 설명하기 위해 이 강의에 필요한 모든
+    정의들을 묵시적으로 라이브러리에서 가져다 사용하기 보다 명시적으로
+    언급할 것이다. 
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab4"></a><h2 class="section">요일들</h2>
+
+<div class="paragraph"> </div>
+
+ 매우 간단한 예를 가지고 정의 방법을 살펴보자. 다음은 콕으로 새로운
+    데이터 값들의 집합(새로운 타입)을 선언하는 것이다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Inductive</span> <span class="id" title="var">day</span> : <span class="id" title="keyword">Type</span> :=<br/>
+&nbsp;&nbsp;| <span class="id" title="var">monday</span> : <span class="id" title="var">day</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">tuesday</span> : <span class="id" title="var">day</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">wednesday</span> : <span class="id" title="var">day</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">thursday</span> : <span class="id" title="var">day</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">friday</span> : <span class="id" title="var">day</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">saturday</span> : <span class="id" title="var">day</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">sunday</span> : <span class="id" title="var">day</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+이 타입을 <span class="inlinecode"><span class="id" title="var">day</span></span>이라 부르고, 각 멤버들은 <span class="inlinecode"><span class="id" title="var">monday</span></span>, <span class="inlinecode"><span class="id" title="var">tuesday</span></span>
+    등이다.  정의에서 두 번째 줄과 그 이후를 "<span class="inlinecode"><span class="id" title="var">monday</span></span>는 <span class="inlinecode"><span class="id" title="var">day</span></span>이고,
+    <span class="inlinecode"><span class="id" title="var">tuesday</span></span>는 <span class="inlinecode"><span class="id" title="var">day</span></span>이고, 등등"과 같이 읽는다.
+
+<div class="paragraph"> </div>
+
+    <span class="inlinecode"><span class="id" title="var">day</span></span>를 정의했으면 요일들을 다루는 함수들을 작성할 수 있다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">next_weekday</span> (<span class="id" title="var">d</span>:<span class="id" title="var">day</span>) : <span class="id" title="var">day</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">d</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">monday</span>    ⇒ <span class="id" title="var">tuesday</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">tuesday</span>   ⇒ <span class="id" title="var">wednesday</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">wednesday</span> ⇒ <span class="id" title="var">thursday</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">thursday</span>  ⇒ <span class="id" title="var">friday</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">friday</span>    ⇒ <span class="id" title="var">monday</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">saturday</span>  ⇒ <span class="id" title="var">monday</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">sunday</span>    ⇒ <span class="id" title="var">monday</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+한 가지 주목할 점은 이 함수의 인자와 반환 타입들을 명시적으로
+    선언한 것이다.  대부분의 함수형 프로그래밍 언어들처럼 콕도 이
+    타입들이 주어지지 않을 때도 많은 경우에 이 타입들을 알아낼 수
+    있다. 즉, 콕은 _타입 유추_를 할 수 있다. 하지만 읽기 쉽게 하기
+    위해서 명시적으로 타입을 선언할 것이다.  
+<div class="paragraph"> </div>
+
+ 함수를 정의하면 몇 가지 예제들을 가지고 잘 동작하는지 확인해야
+    한다.  이를 위해 실제로 세 가지 다른 방법들을 콕에서
+    제공한다. 첫째, <span class="inlinecode"><span class="id" title="keyword">Compute</span></span> 명령어로 <span class="inlinecode"><span class="id" title="var">next_weekday</span></span>를 사용하는
+    복합식을 계산할 수 있다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Compute</span> (<span class="id" title="var">next_weekday</span> <span class="id" title="var">friday</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Compute</span> (<span class="id" title="var">next_weekday</span> (<span class="id" title="var">next_weekday</span> <span class="id" title="var">saturday</span>)).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+(주석에 이 계산 결과를 작성해놓았다. 컴퓨터를 가지고 있다면 당신이
+    원하는 CoqIde나 Proof General과 같은 통합개발환경에서 콕 해석기를
+    실행할 좋은 시점이다. 스스로 시도해보자. 이 책의 콕 소스
+    파일들에서 이 파일 <span class="inlinecode"><span class="id" title="var">Basics.v</span></span>을 불러와서 위 예제를 찾아, 콕에
+    명령을 내리고 결과를 살펴보자.)
+
+<div class="paragraph"> </div>
+
+    둘째, 콕 예제 형태로 _기대하는_ 이 계산 결과를 기록할 수 있다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Example</span> <span class="id" title="var">test_next_weekday</span>:<br/>
+&nbsp;&nbsp;(<span class="id" title="var">next_weekday</span> (<span class="id" title="var">next_weekday</span> <span class="id" title="var">saturday</span>)) = <span class="id" title="var">tuesday</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+이 선언에서 두 가지를 수행한다. (<span class="inlinecode"><span class="id" title="var">saturday</span></span> 다음 두 번째 평일이
+    <span class="inlinecode"><span class="id" title="var">tuedday</span></span>)라는 주장을 만들고, 나중에 이 주장을 참조하는데 사용할
+    이름을 부여한다. 이 주장을 만든 다음 다음과 같이 콕으로 하여금
+    확인할 수 있다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">reflexivity</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+증명에서 사용한 자세한 사항들은 당장 중요하지 않다(곧 설명할
+    것이다). 하지만 "앞서 만든 주장은 등호의 양쪽을 간단하게 변환해서
+    동일한 것으로 계산됨을 보임으로 해서 증명할 수 있다"라고 이해할 수
+    있다.
+
+<div class="paragraph"> </div>
+
+    셋째, 콕으로 하여금 우리가 만든 <span class="inlinecode">정의</span>로 부터 고성능 컴파일러를
+    갖춘 일반적인 프로그래밍 언어 (OCaml, Scheme, Haskell)로 작성된
+    프로그램을 _추출_하게 할 수 있다. 이 기능으로 갈리나로 작성한
+    정확성을 증명한 알고리즘들로 부터 효율적인 기계어 코드로 변환할 수
+    있기 때문에 이 기능은 매우 흥미롭다. (물론, OCaml/Haskell/Scheme
+    컴파일러가 정확하다고 믿고 콕의 코드 추출 기능도 정확하다고
+    믿는다. 하지만 이러한 방법은 오늘날 대부분의 소프트웨어를 개발하는
+    방법과 비교해서 여전히 크게 진보한 것이다. 정말로 이러한 추출
+    방법이 콕을 개발한 목적들 중 하나이다. 나중에 이 주제에 대해서
+    다시 논의하자. 
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab5"></a><h2 class="section">과제 제출 가이드</h2>
+
+<div class="paragraph"> </div>
+
+ 만일 강의에 소프트웨어 기초를 사용하고 있다면 강의 강사는 과제를
+    채점하기 위해 자동 스크립트들을 사용할 수 있다. 이 스크립트들이
+    제대로 동작하기 위해 (그래서 과제의 점수를 제대로 받기 위해) 주의
+    깊게 다음 규칙들을 따르기를 바란다.
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> 채점 매기는 스크립트들은 당신이 제출한 .v 파일들의 표시
+        영역들을 추출한다.  따라서 연습문제들을 구분하는 "마크업"을
+        변경하지 않아야 한다. 연습문제 시작부, 이름, 마지막의 "내용이
+        빈 대괄호" 표시 등. 이 마크업을 처음 본 대로 남겨두기 바란다.
+
+</li>
+<li> 연습문제들을 지우지 마시오. 어떤 연습문제를 뛰어넘은 경우(예를
+        들어, 선택적이라고 표시되었거나 풀 수 없기 때문에) 당신의 .v
+        파일에 부분적으로 증명해도 괜찮다. 하지만 이런 경우 이 증명이
+        <span class="inlinecode"><span class="id" title="var">Admitted</span></span>로 끝나도록 명심하기 바란다. 예를 들어, <span class="inlinecode"><span class="id" title="keyword">Abort</span></span>로
+        끝나면 안 된다. 
+</li>
+</ul>
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab6"></a><h2 class="section">부울</h2>
+
+<div class="paragraph"> </div>
+
+ 유사하게 <span class="inlinecode"><span class="id" title="var">true</span></span>와 <span class="inlinecode"><span class="id" title="var">false</span></span>를 원소로 하는 부울값들의 표준 타입
+    <span class="inlinecode"><span class="id" title="var">bool</span></span>을 정의할 수 있다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Inductive</span> <span class="id" title="var">bool</span> : <span class="id" title="keyword">Type</span> :=<br/>
+&nbsp;&nbsp;| <span class="id" title="var">true</span> : <span class="id" title="var">bool</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">false</span> : <span class="id" title="var">bool</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+비록 처음부터 모든 것을 만들어 보이기 위해서 우리만의 부울값들을
+    만들었지만 물론 콕은 부울값들의 기본 구현을 제공하고 수 많은
+    유용한 함수들과 보조정리들도 함께 제공한다. (궁금하다면 콕
+    라이브러리 문서에서 <span class="inlinecode"><span class="id" title="var">Coq.Init.Datatypes</span></span>을 살펴보라.) 가능한
+    우리가 만든 정의들과 정리들에 표준 라이브러리에 있는 것들과 정확히
+    똑같게 이름을 붙일 것이다.
+
+<div class="paragraph"> </div>
+
+    부울값에 대한 함수들은 아래와 같이 정의할 수 있다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">negb</span> (<span class="id" title="var">b</span>:<span class="id" title="var">bool</span>) : <span class="id" title="var">bool</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">b</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">true</span> ⇒ <span class="id" title="var">false</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">false</span> ⇒ <span class="id" title="var">true</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">andb</span> (<span class="id" title="var">b1</span>:<span class="id" title="var">bool</span>) (<span class="id" title="var">b2</span>:<span class="id" title="var">bool</span>) : <span class="id" title="var">bool</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">b1</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">true</span> ⇒ <span class="id" title="var">b2</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">false</span> ⇒ <span class="id" title="var">false</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">orb</span> (<span class="id" title="var">b1</span>:<span class="id" title="var">bool</span>) (<span class="id" title="var">b2</span>:<span class="id" title="var">bool</span>) : <span class="id" title="var">bool</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">b1</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">true</span> ⇒ <span class="id" title="var">true</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">false</span> ⇒ <span class="id" title="var">b2</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+마지막 두 개는 다중 인자 함수 정의들에 대한 콕 구문을 설명하고
+    있다. 다중 인자 함수 적용에 대한 구문은 다음 "유닛 테스트들"로
+    설명한다. 이 테스트들은 <span class="inlinecode"><span class="id" title="var">orb</span></span> 함수에 대한 완전한 명세, 진리표를
+    구성한다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Infix</span> &quot;&amp;&amp;" := <span class="id" title="var">andb</span>.<br/>
+<span class="id" title="keyword">Infix</span> &quot;||" := <span class="id" title="var">orb</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Example</span> <span class="id" title="var">test_orb5</span>:  <span class="id" title="var">false</span> || <span class="id" title="var">false</span> || <span class="id" title="var">true</span> = <span class="id" title="var">true</span>.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">reflexivity</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<i>표기법에 대한 언급_: <span class="inlinecode">.<span class="id" title="var">v</span></span> 파일들에서 주석 안에 대괄호들을
+    사용하여 콕 코드 일부들을 구분한다. 이 규칙은 <span class="inlinecode"><span class="id" title="var">coqdoc</span></span> 문서
+    도구에서도 사용하는데 주변 텍스트로 부터 코드들을 시각적으로
+    구분되도록 한다. 이 파일들을 변환한 html 버전에서는 <span class="inlinecode">다른</span> <span class="inlinecode">폰트</span>로
+    보일 것이다.
+
+<div class="paragraph"> </div>
+
+    <span class="inlinecode"><span class="id" title="var">Admitted</span></span> 명령어는 증명이 완전하지 않을 때 나중에 채워넣을 수
+    있는 공간으로 사용할 수 있다. 연습문제들에 이 명령어를 사용해서
+    독자들이 실제 증명들로 대체할 부분임을 나타낸다. 
+<div class="paragraph"> </div>
+
+<a name="lab7"></a><h4 class="section">연습문제: 별 1개 (nandb)</h4>
+
+<div class="paragraph"> </div>
+
+ "<span class="inlinecode"><span class="id" title="var">Admitted</span></span>"를 제거하고 다음 함수의 정의를 완성하시오. 그런 다음
+    아래의 <span class="inlinecode"><span class="id" title="keyword">Example</span></span> 주장들을 콕으로 각각 검증할 수 있음을
+    확인하시오. ("<span class="inlinecode"><span class="id" title="var">Admitted</span></span>"를 제거하고 각 증명을 채워 넣으시오.
+    위의 <span class="inlinecode"><span class="id" title="var">orb</span></span> 테스트들의 모델을 따른다.) 이 함수는 입력들 중 하나
+    또는 둘 다 <span class="inlinecode"><span class="id" title="var">false</span></span>이면 <span class="inlinecode"><span class="id" title="var">true</span></span>를 리턴해야 한다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">nandb</span> (<span class="id" title="var">b1</span>:<span class="id" title="var">bool</span>) (<span class="id" title="var">b2</span>:<span class="id" title="var">bool</span>) : <span class="id" title="var">bool</span><br/>
+&nbsp;&nbsp;. <span class="id" title="var">Admitted</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Example</span> <span class="id" title="var">test_nandb1</span>:               (<span class="id" title="var">nandb</span> <span class="id" title="var">true</span> <span class="id" title="var">false</span>) = <span class="id" title="var">true</span>.<br/>
+ <span class="id" title="var">Admitted</span>.<br/>
+<span class="id" title="keyword">Example</span> <span class="id" title="var">test_nandb2</span>:               (<span class="id" title="var">nandb</span> <span class="id" title="var">false</span> <span class="id" title="var">false</span>) = <span class="id" title="var">true</span>.<br/>
+ <span class="id" title="var">Admitted</span>.<br/>
+<span class="id" title="keyword">Example</span> <span class="id" title="var">test_nandb3</span>:               (<span class="id" title="var">nandb</span> <span class="id" title="var">false</span> <span class="id" title="var">true</span>) = <span class="id" title="var">true</span>.<br/>
+ <span class="id" title="var">Admitted</span>.<br/>
+<span class="id" title="keyword">Example</span> <span class="id" title="var">test_nandb4</span>:               (<span class="id" title="var">nandb</span> <span class="id" title="var">true</span> <span class="id" title="var">true</span>) = <span class="id" title="var">false</span>.<br/>
+ <span class="id" title="var">Admitted</span>.<br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+<div class="paragraph"> </div>
+
+<a name="lab8"></a><h4 class="section">연습문제: 별 1개 (andb3)</h4>
+ 아래 <span class="inlinecode"><span class="id" title="var">andb3</span></span> 함수에 대해서도 풀어 보시오. 이 함수는 모든 입력들이 <span class="inlinecode"><span class="id" title="var">true</span></span>이면
+    <span class="inlinecode"><span class="id" title="var">true</span></span>를 반환하고 그렇지 않으면 <span class="inlinecode"><span class="id" title="var">fasle</span></span>를 반환한다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">andb3</span> (<span class="id" title="var">b1</span>:<span class="id" title="var">bool</span>) (<span class="id" title="var">b2</span>:<span class="id" title="var">bool</span>) (<span class="id" title="var">b3</span>:<span class="id" title="var">bool</span>) : <span class="id" title="var">bool</span><br/>
+&nbsp;&nbsp;. <span class="id" title="var">Admitted</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Example</span> <span class="id" title="var">test_andb31</span>:                 (<span class="id" title="var">andb3</span> <span class="id" title="var">true</span> <span class="id" title="var">true</span> <span class="id" title="var">true</span>) = <span class="id" title="var">true</span>.<br/>
+ <span class="id" title="var">Admitted</span>.<br/>
+<span class="id" title="keyword">Example</span> <span class="id" title="var">test_andb32</span>:                 (<span class="id" title="var">andb3</span> <span class="id" title="var">false</span> <span class="id" title="var">true</span> <span class="id" title="var">true</span>) = <span class="id" title="var">false</span>.<br/>
+ <span class="id" title="var">Admitted</span>.<br/>
+<span class="id" title="keyword">Example</span> <span class="id" title="var">test_andb33</span>:                 (<span class="id" title="var">andb3</span> <span class="id" title="var">true</span> <span class="id" title="var">false</span> <span class="id" title="var">true</span>) = <span class="id" title="var">false</span>.<br/>
+ <span class="id" title="var">Admitted</span>.<br/>
+<span class="id" title="keyword">Example</span> <span class="id" title="var">test_andb34</span>:                 (<span class="id" title="var">andb3</span> <span class="id" title="var">true</span> <span class="id" title="var">true</span> <span class="id" title="var">false</span>) = <span class="id" title="var">false</span>.<br/>
+ <span class="id" title="var">Admitted</span>.<br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab9"></a><h2 class="section">함수 타입</h2>
+
+<div class="paragraph"> </div>
+
+ 콕의 모든 식은 타입이 매겨져 있어서 식의 계산 결과를
+    나타낸다. <span class="inlinecode"><span class="id" title="keyword">Check</span></span> 명령으로 식의 타입을 출력할 수 있다.  
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Check</span> <span class="id" title="var">true</span>.<br/>
+<span class="id" title="keyword">Check</span> (<span class="id" title="var">negb</span> <span class="id" title="var">true</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<span class="inlinecode"><span class="id" title="var">negb</span></span> 같은 함수들은 그 자체가 마치 <span class="inlinecode"><span class="id" title="var">true</span></span>와 <span class="inlinecode"><span class="id" title="var">false</span></span> 같은 데이터
+    값들이다.  이 함수들의 타입들을 _함수 타입_이라 부르고, 화살표를
+    사용해서 표시한다.  
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Check</span> <span class="id" title="var">negb</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<span class="inlinecode"><span class="id" title="var">negb</span></span>의 타입은 <span class="inlinecode"><span class="id" title="var">bool</span></span> <span class="inlinecode">→</span> <span class="inlinecode"><span class="id" title="var">bool</span></span>라고 작성하고 "<span class="inlinecode"><span class="id" title="var">bool</span></span> 애로우
+    <span class="inlinecode"><span class="id" title="var">bool</span></span>"이라 발음하고 "<span class="inlinecode"><span class="id" title="var">bool</span></span> 타입의 입력이 주어지면 <span class="inlinecode"><span class="id" title="var">bool</span></span> 타입의
+    출력을 내는 함수이다."라고 읽는다. 유사하게 <span class="inlinecode"><span class="id" title="var">andb</span></span>의 타입은 <span class="inlinecode"><span class="id" title="var">bool</span></span>
+    <span class="inlinecode">→</span> <span class="inlinecode"><span class="id" title="var">bool</span></span> <span class="inlinecode">→</span> <span class="inlinecode"><span class="id" title="var">bool</span></span>이라고 작성하고 "<span class="inlinecode"><span class="id" title="var">bool</span></span> 타입인 두 입력들이
+    주어지면 <span class="inlinecode"><span class="id" title="var">bool</span></span> 타입의 출력을 내는 함수이다"라고 읽는다. 
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab10"></a><h2 class="section">모듈</h2>
+
+<div class="paragraph"> </div>
+
+ 콕은 _모듈 시스템_을 제공하여 큰 규모의 개발을 구성하는 것을
+    돕는다. 이 강의에서 모듈의 대부분 특징들은 필요로 하지 않을
+    것이지만 한 가지는 유용하다. <span class="inlinecode"><span class="id" title="keyword">Module</span></span> <span class="inlinecode"><span class="id" title="var">X</span></span>와 <span class="inlinecode"><span class="id" title="keyword">End</span></span> <span class="inlinecode"><span class="id" title="var">X</span></span> 표시들 사이에
+    선언들을 감싸면 <span class="inlinecode"><span class="id" title="keyword">End</span></span> 다음에서 이 정의들을 참조하려면 <span class="inlinecode"><span class="id" title="var">X.foo</span></span>와
+    같은 이름들을 사용한다. 이 특징을 이용하여 내부 모듈에 <span class="inlinecode"><span class="id" title="var">nat</span></span>
+    타입을 정의할 것이다.  표준 라이브러리에 있는 동일한 이름의 타입과
+    충돌나지 않는다 (표준 라이브러리의 타입에 대해서 아주 약간의
+    편리하고 특별한 표기법을 사용할 수 있기 때문에 이 표준 타입도
+    사용하려고 한다).  
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Module</span> <span class="id" title="var">NatPlayground</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab11"></a><h2 class="section">숫자</h2>
+
+<div class="paragraph"> </div>
+
+ 이제까지 정의한 타입들은 유한 집합의 원소들을 명시적으로 나열하여
+    정의한 "열거 타입들"이었습니다. 타입을 정의하는 더 흥미로운 방법은
+    원소들을 묘사하는 _귀납적 규칙들_을 모으는 것이다. 예를 들어
+    자연수(의 단항 표현)를 다음과 같이 정의할 수 있다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Inductive</span> <span class="id" title="var">nat</span> : <span class="id" title="keyword">Type</span> :=<br/>
+&nbsp;&nbsp;| <span class="id" title="var">O</span> : <span class="id" title="var">nat</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">S</span> : <span class="id" title="var">nat</span> → <span class="id" title="var">nat</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+이 정의의 각 절들을 다음과 같이 볼 수 있다.
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> <span class="inlinecode"><span class="id" title="var">O</span></span>는 자연수이다. (숫자 "<span class="inlinecode">0</span>"가 아니라 문자 "<span class="inlinecode"><span class="id" title="var">O</span></span>"입니다.)
+
+</li>
+<li> <span class="inlinecode"><span class="id" title="var">S</span></span>는 자연수 앞에 놓아서 또 다른 자연수를 만들 수 있습니다. 즉
+       <span class="inlinecode"><span class="id" title="var">n</span></span>이 자연수이면 <span class="inlinecode"><span class="id" title="var">S</span></span> <span class="inlinecode"><span class="id" title="var">n</span></span>도 자연수입니다. 
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+ 조금 더 자세히 이 타입을 살펴봅시다.
+
+<div class="paragraph"> </div>
+
+    모든 귀납적으로 정의한 집합 (<span class="inlinecode"><span class="id" title="var">day</span></span>, <span class="inlinecode"><span class="id" title="var">nat</span></span>, <span class="inlinecode"><span class="id" title="var">bool</span></span>, 등.)은 사실
+    <span class="inlinecode"><span class="id" title="var">O</span></span>, <span class="inlinecode"><span class="id" title="var">S</span></span>, <span class="inlinecode"><span class="id" title="var">true</span></span>, <span class="inlinecode"><span class="id" title="var">false</span></span>, <span class="inlinecode"><span class="id" title="var">monday</span></span>, 등과 같은 _생성자들_로 부터
+    만든 _식들_의 집합이다. <span class="inlinecode"><span class="id" title="var">nat</span></span>의 정의는 집합 <span class="inlinecode"><span class="id" title="var">nat</span></span>의 식들을 어떻게
+    만드는지를 말한다.
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> <span class="inlinecode"><span class="id" title="var">O</span></span>와 <span class="inlinecode"><span class="id" title="var">S</span></span>는 생성자들이다.
+
+</li>
+<li> 식 <span class="inlinecode"><span class="id" title="var">O</span></span>는 집합 <span class="inlinecode"><span class="id" title="var">nat</span></span>에 속한다.
+
+</li>
+<li> 만일 <span class="inlinecode"><span class="id" title="var">n</span></span>이 집합 <span class="inlinecode"><span class="id" title="var">nat</span></span>에 속하는 식이라면 <span class="inlinecode"><span class="id" title="var">S</span></span> <span class="inlinecode"><span class="id" title="var">n</span></span>도 이 집합에 속하는
+      식이다. 그리고,
+
+</li>
+<li> 이렇게 두 가지 방법으로 형성된 식들만 집합 <span class="inlinecode"><span class="id" title="var">nat</span></span>에 속한다.  
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+ <span class="inlinecode"><span class="id" title="var">day</span></span>와 <span class="inlinecode"><span class="id" title="var">bool</span></span>을 정의한 것에 대해 동일한 규칙들을
+    적용한다. (생성자들에 대해 사용했던 주석들은 <span class="inlinecode"><span class="id" title="var">O</span></span> 생성자에 대한
+    주석과 유사하게 인자를 받지 않는다.)
+
+<div class="paragraph"> </div>
+
+    위 조건들은 <span class="inlinecode"><span class="id" title="keyword">Inductive</span></span> 선언의 정확한 힘이다. 이 조건들은 식 <span class="inlinecode"><span class="id" title="var">O</span></span>,
+    식 <span class="inlinecode"><span class="id" title="var">S</span></span> <span class="inlinecode"><span class="id" title="var">O</span></span>, 식 <span class="inlinecode"><span class="id" title="var">S</span></span> <span class="inlinecode">(<span class="id" title="var">S</span></span> <span class="inlinecode"><span class="id" title="var">O</span>)</span>, 식 <span class="inlinecode"><span class="id" title="var">S</span></span> <span class="inlinecode">(<span class="id" title="var">S</span></span> <span class="inlinecode">(<span class="id" title="var">S</span></span> <span class="inlinecode"><span class="id" title="var">O</span>))</span>, 등등이 집합 <span class="inlinecode"><span class="id" title="var">nat</span></span>에
+    속한다는 것을 뜻하고, 예를 들어 <span class="inlinecode"><span class="id" title="var">true</span></span>, <span class="inlinecode"><span class="id" title="var">andb</span></span> <span class="inlinecode"><span class="id" title="var">true</span></span> <span class="inlinecode"><span class="id" title="var">false</span></span>, <span class="inlinecode"><span class="id" title="var">S</span></span> <span class="inlinecode">(<span class="id" title="var">S</span></span>
+    <span class="inlinecode"><span class="id" title="var">false</span>)</span>, <span class="inlinecode"><span class="id" title="var">O</span></span> <span class="inlinecode">(<span class="id" title="var">O</span></span> <span class="inlinecode">(<span class="id" title="var">O</span></span> <span class="inlinecode"><span class="id" title="var">S</span>))</span>와 같은 다른 식들은 집합 <span class="inlinecode"><span class="id" title="var">nat</span></span>에 속하지
+    않는다는 것을 의미한다.
+
+<div class="paragraph"> </div>
+
+    여기서 중요한 점은 이제까지 우리가 한 것은 단지 숫자들의
+    _표현_(숫자들을 쓰는 방법)을 정의한 것뿐이다. <span class="inlinecode"><span class="id" title="var">O</span></span>와 <span class="inlinecode"><span class="id" title="var">S</span></span>는 임의로
+    정한 이름들이고, 지금은 특별한 의미를 가지고 있지 않다. 이
+    이름들은 단지 두 가지 다른 표시들로 숫자들을 쓸 때 사용할 수
+    있다. 물론 <span class="inlinecode"><span class="id" title="var">nat</span></span>의 원소는 <span class="inlinecode"><span class="id" title="var">O</span></span> 다음에 <span class="inlinecode"><span class="id" title="var">S</span></span> 표시들로 감싸는
+    문자열이라는 규칙도 필요하다. 원한다면 사실상 동일한 정의를 다음과
+    같이 작성할 수 있다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Inductive</span> <span class="id" title="var">nat'</span> : <span class="id" title="keyword">Type</span> :=<br/>
+&nbsp;&nbsp;| <span class="id" title="var">stop</span> : <span class="id" title="var">nat'</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">tick</span> : <span class="id" title="var">nat'</span> → <span class="id" title="var">nat'</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+이 표시들의 _해석_은 계산할 때 어떻게 이 표시들을 사용하는가로
+    결정된다. 
+<div class="paragraph"> </div>
+
+ 부울값들과 요일들에 대해 정의한 함수들 처럼 자연수 표현에 대해
+    패턴 매치를 적용하는 함수들을 작성함으로써 자연수 표현에 대한
+    해석을 정의할 수 있다. 예를 들어, 다음은 바로 앞 자연수를 계산하는
+    함수다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">pred</span> (<span class="id" title="var">n</span> : <span class="id" title="var">nat</span>) : <span class="id" title="var">nat</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">n</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">O</span> ⇒ <span class="id" title="var">O</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">S</span> <span class="id" title="var">n'</span> ⇒ <span class="id" title="var">n'</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+두 번째 분기는 "만일 <span class="inlinecode"><span class="id" title="var">n</span></span>이 어떤 <span class="inlinecode"><span class="id" title="var">n'</span></span>에 대해 <span class="inlinecode"><span class="id" title="var">S</span></span> <span class="inlinecode"><span class="id" title="var">n'</span></span> 형태라면
+    이 함수는 <span class="inlinecode"><span class="id" title="var">n'</span></span>을 리턴한다."로 해석할 수 있다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">NatPlayground</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">minustwo</span> (<span class="id" title="var">n</span> : <span class="id" title="var">nat</span>) : <span class="id" title="var">nat</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">n</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">O</span> ⇒ <span class="id" title="var">O</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">S</span> <span class="id" title="var">O</span> ⇒ <span class="id" title="var">O</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">n'</span>) ⇒ <span class="id" title="var">n'</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+자연수는 아주 흔하게 사용하기 때문에 콕은 자연수들을 파싱하고
+    출력하는 약간의 기능을 제공하는데, 일반 아라비아 숫자들은 <span class="inlinecode"><span class="id" title="var">S</span></span>와
+    <span class="inlinecode"><span class="id" title="var">O</span></span> 생성자들로 정의하는 "단항" 표기법의 대안으로 사용할 수
+    있다. 콕은 특별한 옵션을 주지 않는다면 기본적으로 자연수들을
+    아라비아 숫자로 출력한다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Check</span> (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">O</span>)))).<br/>
+<span class="id" title="keyword">Compute</span> (<span class="id" title="var">minustwo</span> 4).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+마치 함수들 <span class="inlinecode"><span class="id" title="var">minustwo</span></span>와 <span class="inlinecode"><span class="id" title="var">pred</span></span>와 같이 생성자 <span class="inlinecode"><span class="id" title="var">S</span></span>도 <span class="inlinecode"><span class="id" title="var">nat</span></span> <span class="inlinecode">→</span> <span class="inlinecode"><span class="id" title="var">nat</span></span>
+    타입을 갖는다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Check</span> <span class="id" title="var">S</span>.<br/>
+<span class="id" title="keyword">Check</span> <span class="id" title="var">pred</span>.<br/>
+<span class="id" title="keyword">Check</span> <span class="id" title="var">minustwo</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+이것들은 모두 숫자에 적용해서 숫자를 반환한다. 하지만 첫 번째와
+    다른 두 가지 사이에 근본적인 차이가 있다. <span class="inlinecode"><span class="id" title="var">pred</span></span>와 <span class="inlinecode"><span class="id" title="var">minustwo</span></span> 같은
+    함수들은 _계산 규칙들_와 함께 온다. 예를 들어 <span class="inlinecode"><span class="id" title="var">pred</span></span>의 정의에 의해
+    <span class="inlinecode"><span class="id" title="var">pred</span></span> <span class="inlinecode">2</span>가 <span class="inlinecode">1</span>로 계산된다.  <span class="inlinecode"><span class="id" title="var">S</span></span>의 정의에는 이러한 것이 달려있지
+    않다. 인자에 적용될 수 있다는 면에서 함수와 비슷하지만 아무런
+    계산을 _하지_ 않는다! 단지 숫자를 쓰는 방법이다. (표준 아라비아
+    숫자들에 대해 생각해보자. 숫자 <span class="inlinecode">1</span>은 계산이 아니고 하나의
+    데이터이다. <span class="inlinecode">111</span>이라고 쓸 때 숫자 백십일을 의미할 때 <span class="inlinecode">1</span>을 세 번
+    사용해서 어떤 숫자를 구체적으로 표현한다.)
+
+<div class="paragraph"> </div>
+
+    숫자들에 대한 대부분의 함수 정의들에 대해 패턴 매칭만으로 충분하지
+    않고 재귀가 필요하다. 예를 들어 숫자 <span class="inlinecode"><span class="id" title="var">n</span></span>이 짝수인지 보려면
+    재귀적으로 <span class="inlinecode"><span class="id" title="var">n</span>-2</span>가 짝수인지 확인할 필요가 있을 수 있다. 이런
+    함수들을 쓰려면 키워드 <span class="inlinecode"><span class="id" title="keyword">Fixpoint</span></span>를 사용한다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Fixpoint</span> <span class="id" title="var">evenb</span> (<span class="id" title="var">n</span>:<span class="id" title="var">nat</span>) : <span class="id" title="var">bool</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">n</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">O</span>        ⇒ <span class="id" title="var">true</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">S</span> <span class="id" title="var">O</span>      ⇒ <span class="id" title="var">false</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">n'</span>) ⇒ <span class="id" title="var">evenb</span> <span class="id" title="var">n'</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<span class="inlinecode"><span class="id" title="var">oddb</span></span>도 비슷하게 <span class="inlinecode"><span class="id" title="keyword">Fixpoint</span></span>를 사용한 선언으로 정의할 수 있지만
+    여기서 더 간단하게 정의한다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">oddb</span> (<span class="id" title="var">n</span>:<span class="id" title="var">nat</span>) : <span class="id" title="var">bool</span>   :=   <span class="id" title="var">negb</span> (<span class="id" title="var">evenb</span> <span class="id" title="var">n</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Example</span> <span class="id" title="var">test_oddb1</span>:    <span class="id" title="var">oddb</span> 1 = <span class="id" title="var">true</span>.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">reflexivity</span>. <span class="id" title="keyword">Qed</span>.<br/>
+<span class="id" title="keyword">Example</span> <span class="id" title="var">test_oddb2</span>:    <span class="id" title="var">oddb</span> 4 = <span class="id" title="var">false</span>.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">reflexivity</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+(이 증명들을 따라가보면 <span class="inlinecode"><span class="id" title="tactic">simpl</span></span>은 사실 증명 목표를 달성하기 위해
+    아무런 효과를 내지 못한다. 모든 것은 <span class="inlinecode"><span class="id" title="tactic">reflexivity</span></span>에 의해
+    진행된다.  왜 그런지 곳 알게 될 것이다.
+
+<div class="paragraph"> </div>
+
+    자연스럽게 재귀로 다중 인자 함수들을 정의할 수 있다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Module</span> <span class="id" title="var">NatPlayground2</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Fixpoint</span> <span class="id" title="var">plus</span> (<span class="id" title="var">n</span> : <span class="id" title="var">nat</span>) (<span class="id" title="var">m</span> : <span class="id" title="var">nat</span>) : <span class="id" title="var">nat</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">n</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">O</span> ⇒ <span class="id" title="var">m</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">S</span> <span class="id" title="var">n'</span> ⇒ <span class="id" title="var">S</span> (<span class="id" title="var">plus</span> <span class="id" title="var">n'</span> <span class="id" title="var">m</span>)<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+우리가 기대하는 대로 삼 더하기 이는 5다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Compute</span> (<span class="id" title="var">plus</span> 3 2).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+이 결론을 내기 위해 콕이 수행한 단순화 과정은 다음과 같이 설명할 수
+    있다. 
+</div>
+<div class="code">
+
+<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+편리한 표기법으로 둘 이상의 인자들이 같은 타입이면 한 번에 작성할
+    수 있다.  다음 정의에서 <span class="inlinecode">(<span class="id" title="var">n</span></span> <span class="inlinecode"><span class="id" title="var">m</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" title="var">nat</span>)</span>은 <span class="inlinecode">(<span class="id" title="var">n</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" title="var">nat</span>)</span> <span class="inlinecode">(<span class="id" title="var">m</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" title="var">nat</span>)</span>으로
+    작성하는 것과 동일하다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Fixpoint</span> <span class="id" title="var">mult</span> (<span class="id" title="var">n</span> <span class="id" title="var">m</span> : <span class="id" title="var">nat</span>) : <span class="id" title="var">nat</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">n</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">O</span> ⇒ <span class="id" title="var">O</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">S</span> <span class="id" title="var">n'</span> ⇒ <span class="id" title="var">plus</span> <span class="id" title="var">m</span> (<span class="id" title="var">mult</span> <span class="id" title="var">n'</span> <span class="id" title="var">m</span>)<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Example</span> <span class="id" title="var">test_mult1</span>: (<span class="id" title="var">mult</span> 3 3) = 9.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">reflexivity</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+두 식들 사이에 콤마를 넣어 한 번에 패턴 매치할 수 있다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Fixpoint</span> <span class="id" title="var">minus</span> (<span class="id" title="var">n</span> <span class="id" title="var">m</span>:<span class="id" title="var">nat</span>) : <span class="id" title="var">nat</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> (<span class="id" title="var">n</span>, <span class="id" title="var">m</span>) <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| (<span class="id" title="var">O</span>   , <span class="id" title="var">_</span>)    ⇒ <span class="id" title="var">O</span><br/>
+&nbsp;&nbsp;| (<span class="id" title="var">S</span> <span class="id" title="var">_</span> , <span class="id" title="var">O</span>)    ⇒ <span class="id" title="var">n</span><br/>
+&nbsp;&nbsp;| (<span class="id" title="var">S</span> <span class="id" title="var">n'</span>, <span class="id" title="var">S</span> <span class="id" title="var">m'</span>) ⇒ <span class="id" title="var">minus</span> <span class="id" title="var">n'</span> <span class="id" title="var">m'</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+첫 번째 줄의 _는 _와일드카드 패턴_이다. 패턴에 이 밑줄을 쓰면
+    오른편에 사용되지 않는 어떤 변수를 작성하는 것과 동일하다. 이
+    밑줄을 통해 변수 이름을 짓는 것을 하지 않아도 된다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">NatPlayground2</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Fixpoint</span> <span class="id" title="var">exp</span> (<span class="id" title="var">base</span> <span class="id" title="var">power</span> : <span class="id" title="var">nat</span>) : <span class="id" title="var">nat</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">power</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">O</span> ⇒ <span class="id" title="var">S</span> <span class="id" title="var">O</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">S</span> <span class="id" title="var">p</span> ⇒ <span class="id" title="var">mult</span> <span class="id" title="var">base</span> (<span class="id" title="var">exp</span> <span class="id" title="var">base</span> <span class="id" title="var">p</span>)<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab12"></a><h4 class="section">연습문제: 별 하나 (팩토리얼)</h4>
+ 표준 팩토리얼 함수를 떠올려보라:
+
+<div class="paragraph"> </div>
+
+       factorial(0)  =  1
+       factorial(n)  =  n * factorial(n-1)     (if n&gt;0)
+
+<div class="paragraph"> </div>
+
+    이 것을 콕으로 바꿔보자. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Fixpoint</span> <span class="id" title="var">factorial</span> (<span class="id" title="var">n</span>:<span class="id" title="var">nat</span>) : <span class="id" title="var">nat</span><br/>
+&nbsp;&nbsp;. <span class="id" title="var">Admitted</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Example</span> <span class="id" title="var">test_factorial1</span>:          (<span class="id" title="var">factorial</span> 3) = 6.<br/>
+ <span class="id" title="var">Admitted</span>.<br/>
+<span class="id" title="keyword">Example</span> <span class="id" title="var">test_factorial2</span>:          (<span class="id" title="var">factorial</span> 5) = (<span class="id" title="var">mult</span> 10 12).<br/>
+ <span class="id" title="var">Admitted</span>.<br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+<div class="paragraph"> </div>
+
+ 덧셈, 곱셈, 뺄셈에 대한 _표기법_을 도입하여 조금 더 읽고 쓰기 쉬운
+    수식들을 만들 수 있다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Notation</span> &quot;x + y" := (<span class="id" title="var">plus</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 50, <span class="id" title="tactic">left</span> <span class="id" title="keyword">associativity</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <span class="id" title="var">nat_scope</span>.<br/>
+<span class="id" title="keyword">Notation</span> &quot;x - y" := (<span class="id" title="var">minus</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 50, <span class="id" title="tactic">left</span> <span class="id" title="keyword">associativity</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <span class="id" title="var">nat_scope</span>.<br/>
+<span class="id" title="keyword">Notation</span> &quot;x * y" := (<span class="id" title="var">mult</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 40, <span class="id" title="tactic">left</span> <span class="id" title="keyword">associativity</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <span class="id" title="var">nat_scope</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Check</span> ((0 + 1) + 1).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+(<span class="inlinecode"><span class="id" title="keyword">level</span></span>, <span class="inlinecode"><span class="id" title="keyword">associativity</span></span>, <span class="inlinecode"><span class="id" title="var">nat_scope</span></span> 표기법들은 콕의 파서가 이
+    표기법들을 어떻게 다뤄야 하는지를 지시한다. 이 강의를 위해서는
+    상세한 내용이 중요하지 않지만 관심있는 독자들은 이 장의 선택 사항인
+    "표기법에 대한 추가 설명" 절을 참고할 수 있다.)
+
+<div class="paragraph"> </div>
+
+    이 표기법들은 우리가 만든 정의들을 변경하는 것은 아니고 콕 파서가
+    <span class="inlinecode"><span class="id" title="var">plus</span></span> <span class="inlinecode"><span class="id" title="var">x</span></span> <span class="inlinecode"><span class="id" title="var">y</span></span> 대신에 <span class="inlinecode"><span class="id" title="var">x</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" title="var">y</span></span>를 이해하도록 하는 명령어들이고, 또한 
+    역으로 콕 출력기가 <span class="inlinecode"><span class="id" title="var">plus</span></span> <span class="inlinecode"><span class="id" title="var">x</span></span> <span class="inlinecode"><span class="id" title="var">y</span></span> 대신 <span class="inlinecode"><span class="id" title="var">x</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" title="var">y</span></span>를 출력하게 한다. 
+<div class="paragraph"> </div>
+
+ 콕에서 처음부터 내장된 것이 거의 없다고 얘기했을 때, 정말로
+    그렇다.  심지어 숫자들이 같은지 테스트하는 것조차 사용자 정의
+    연산이다!  이제 함수 <span class="inlinecode"><span class="id" title="var">beq_nat</span></span>를 정의해서 <span class="inlinecode"><span class="id" title="var">nat</span></span>의 자연수들이 <span class="inlinecode"><span class="id" title="var">eq</span></span>
+    같은지 테스트하고 <span class="inlinecode"><span class="id" title="var">b</span></span> 부울 값을 낸다. 중첩된 <span class="inlinecode"><span class="id" title="keyword">match</span></span>를 사용한다. (
+    <span class="inlinecode"><span class="id" title="var">minus</span></span>에서처럼 동시에 패턴 매치하는 방법을 사용할 수도
+    있었다.) 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Fixpoint</span> <span class="id" title="var">beq_nat</span> (<span class="id" title="var">n</span> <span class="id" title="var">m</span> : <span class="id" title="var">nat</span>) : <span class="id" title="var">bool</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">n</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">O</span> ⇒ <span class="id" title="keyword">match</span> <span class="id" title="var">m</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">O</span> ⇒ <span class="id" title="var">true</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">S</span> <span class="id" title="var">m'</span> ⇒ <span class="id" title="var">false</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">S</span> <span class="id" title="var">n'</span> ⇒ <span class="id" title="keyword">match</span> <span class="id" title="var">m</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">O</span> ⇒ <span class="id" title="var">false</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">S</span> <span class="id" title="var">m'</span> ⇒ <span class="id" title="var">beq_nat</span> <span class="id" title="var">n'</span> <span class="id" title="var">m'</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<span class="inlinecode"><span class="id" title="var">leb</span></span> 함수는 첫 번째 인자가 두 번째 인자와 같거나 작은지 테스트하고
+    부울 값을 낸다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Fixpoint</span> <span class="id" title="var">leb</span> (<span class="id" title="var">n</span> <span class="id" title="var">m</span> : <span class="id" title="var">nat</span>) : <span class="id" title="var">bool</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">n</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">O</span> ⇒ <span class="id" title="var">true</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">S</span> <span class="id" title="var">n'</span> ⇒<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">m</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">O</span> ⇒ <span class="id" title="var">false</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">S</span> <span class="id" title="var">m'</span> ⇒ <span class="id" title="var">leb</span> <span class="id" title="var">n'</span> <span class="id" title="var">m'</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Example</span> <span class="id" title="var">test_leb1</span>:             (<span class="id" title="var">leb</span> 2 2) = <span class="id" title="var">true</span>.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">reflexivity</span>. <span class="id" title="keyword">Qed</span>.<br/>
+<span class="id" title="keyword">Example</span> <span class="id" title="var">test_leb2</span>:             (<span class="id" title="var">leb</span> 2 4) = <span class="id" title="var">true</span>.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">reflexivity</span>. <span class="id" title="keyword">Qed</span>.<br/>
+<span class="id" title="keyword">Example</span> <span class="id" title="var">test_leb3</span>:             (<span class="id" title="var">leb</span> 4 2) = <span class="id" title="var">false</span>.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">reflexivity</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab13"></a><h4 class="section">연습문제: 별 하나 (blt_nat)</h4>
+ <span class="inlinecode"><span class="id" title="var">blt_nat</span></span> 함수는 <span class="inlinecode"><span class="id" title="var">nat</span></span>의 자연수들을 비교해서 작은지 비교하고 (<span class="inlinecode"><span class="id" title="var">l</span></span>,
+    <span class="inlinecode"><span class="id" title="var">t</span></span>) 부울 값을 낸다. 새로운 <span class="inlinecode"><span class="id" title="keyword">Fixpoint</span></span> 함수를 만들지 않고 이전에
+    만든 함수에 관해서 정의한다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">blt_nat</span> (<span class="id" title="var">n</span> <span class="id" title="var">m</span> : <span class="id" title="var">nat</span>) : <span class="id" title="var">bool</span><br/>
+&nbsp;&nbsp;. <span class="id" title="var">Admitted</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Example</span> <span class="id" title="var">test_blt_nat1</span>:             (<span class="id" title="var">blt_nat</span> 2 2) = <span class="id" title="var">false</span>.<br/>
+ <span class="id" title="var">Admitted</span>.<br/>
+<span class="id" title="keyword">Example</span> <span class="id" title="var">test_blt_nat2</span>:             (<span class="id" title="var">blt_nat</span> 2 4) = <span class="id" title="var">true</span>.<br/>
+ <span class="id" title="var">Admitted</span>.<br/>
+<span class="id" title="keyword">Example</span> <span class="id" title="var">test_blt_nat3</span>:             (<span class="id" title="var">blt_nat</span> 4 2) = <span class="id" title="var">false</span>.<br/>
+ <span class="id" title="var">Admitted</span>.<br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab14"></a><h1 class="section">간략화를 사용한 증명</h1>
+
+<div class="paragraph"> </div>
+
+ 이제 몇 가지 자료형들과 함수들을 정의했으니 이들의 동작에 대한
+    성질들을 기술하고 증명해보자. 사실 이전 절들의 각 <span class="inlinecode"><span class="id" title="keyword">Example</span></span>에서
+    어떤 함수와 어떤 입력들에 대한 동작에 대한 정밀한 주장을 이미
+    만들기 시작해왔다. 이 주장들을 증명하는 것은 항상
+    동일했다. <span class="inlinecode"><span class="id" title="tactic">simpl</span></span>을 사용하여 등식의 양 편을 간략화하고
+    <span class="inlinecode"><span class="id" title="tactic">reflexivity</span></span>를 사용하여 양 쪽이 동일한 값인지 검사하였다.
+
+<div class="paragraph"> </div>
+
+    동일한 류의 "간략화에 의한 증명"은 더 흥미로운 성질들을
+    증명하는 데에도 사용될 수 있다. 예를 들어, <span class="inlinecode">0</span>은 <span class="inlinecode">+</span>에 대한 왼편
+    "중성 요소"라는 사실은 <span class="inlinecode"><span class="id" title="var">n</span></span>이 무엇이든지 <span class="inlinecode">0</span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" title="var">n</span></span>을 <span class="inlinecode"><span class="id" title="var">n</span></span>으로 환원하는
+    것을 관찰해서 증명할 수 있다. <span class="inlinecode"><span class="id" title="var">plus</span></span> 정의로부터 직접 확인할 수
+    있는 사실이기도 하다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <span class="id" title="var">plus_O_n</span> : <span class="id" title="keyword">∀</span> <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, 0 + <span class="id" title="var">n</span> = <span class="id" title="var">n</span>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">n</span>. <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">reflexivity</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+(위 문장은 통합개발환경에서 <span class="inlinecode">.<span class="id" title="var">v</span></span> 파일에서 보는 것과 브라우저에서
+    HTML로 보는 것이 다르다는 것을 인지 할 수 있다. <span class="inlinecode">.<span class="id" title="var">v</span></span> 파일들은
+    <span class="inlinecode"><span class="id" title="keyword">∀</span></span> 전체 한정자를 예약 식별자 "forall"로 작성한다. <span class="inlinecode">.<span class="id" title="var">v</span></span>
+    파일들이 HTML로 변환될 때 이 식별자는 A를 상하로 뒤집은 기호로
+    변환된다.)
+
+<div class="paragraph"> </div>
+
+    이제 <span class="inlinecode"><span class="id" title="tactic">reflexivity</span></span>가 우리가 인정해온 것보다 더 강력하다는 것을
+    언급하기에 적절하다. 우리가 봐온 예제들에서 <span class="inlinecode"><span class="id" title="tactic">simpl</span></span> 명령어를
+    사용하는 것은 사실 필요하지 않았었다. 왜냐하면 <span class="inlinecode"><span class="id" title="tactic">reflexivity</span></span>로
+    양쪽이 동일한지 검사할 때 자동으로 약간의 간략화를 수행하기
+    때문이다. <span class="inlinecode"><span class="id" title="tactic">simpl</span></span>을 추가해서 증명이 끝나기 전에 간략화한 다음의
+    중간 과정을 볼 수 있었다. 다음은 정리의 더 짧은 증명이다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <span class="id" title="var">plus_O_n'</span> : <span class="id" title="keyword">∀</span> <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, 0 + <span class="id" title="var">n</span> = <span class="id" title="var">n</span>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">n</span>. <span class="id" title="tactic">reflexivity</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+게다가 <span class="inlinecode"><span class="id" title="tactic">reflexivity</span></span>는 <span class="inlinecode"><span class="id" title="tactic">simpl</span></span>보다 다소 _더 많이_ 간략화를
+    수행한다는 것을 아는 것이 나중에 유용할 것이다. 예를 들어, 정의된
+    낱말들을 "펼치기"를 시도해서 이 낱말들을 오른편 정의들로 대체한다.
+    이러한 차이에 대한 이유는 만일 <span class="inlinecode"><span class="id" title="tactic">reflexivity</span></span>가 성공하면 전체
+    목표를 달성하지만, <span class="inlinecode"><span class="id" title="tactic">reflexivity</span></span>가 모든 이러한 간략화와 펼치기를
+    통해 만든 확장된 식들이 무엇인지 들여다볼 필요가 없다. 반면에
+    <span class="inlinecode"><span class="id" title="tactic">simpl</span></span>은 새로 만든 목표가 무엇인지 보고 이해할 필요가 있는
+    상황에서 사용된다. 무작정 정의들을 확장해서 목표가 복잡한 상태에
+    놓이게 되는 것을 원하지 않을 수 있다.
+
+<div class="paragraph"> </div>
+
+    방금 언급한 정리의 형태와 증명은 그전에 봤던 더 간단한 예제들과
+    몇 가지 차이들만 있을 뿐 거의 똑같다.
+
+<div class="paragraph"> </div>
+
+    첫째, <span class="inlinecode"><span class="id" title="keyword">Example</span></span> 대신 <span class="inlinecode"><span class="id" title="keyword">Theorem</span></span> 키워드를 사용했다. 이 차이는 대부분
+    스타일의 문제이다. <span class="inlinecode"><span class="id" title="keyword">Example</span></span>과 <span class="inlinecode"><span class="id" title="keyword">Theorem</span></span> 키워드들은 (그리고
+    <span class="inlinecode"><span class="id" title="keyword">Lemma</span></span>, <span class="inlinecode"><span class="id" title="keyword">Fact</span></span>, <span class="inlinecode"><span class="id" title="keyword">Remark</span></span>와 같은 몇 가지 더 다른 키워드들) 콕
+    입장에서는 거의 같다.
+
+<div class="paragraph"> </div>
+
+    둘째, 정리들에서 이 정리들이 _모든_ 자연수들 <span class="inlinecode"><span class="id" title="var">n</span></span>에 대해 얘기하기
+    위해 사용한 한정자 <span class="inlinecode"><span class="id" title="keyword">∀</span></span> <span class="inlinecode"><span class="id" title="var">n</span>:<span class="id" title="var">nat</span></span>를 추가하였다. 보통 이러한
+    정리들을 증명하기 위해 일반적으로 "<span class="inlinecode"><span class="id" title="var">n</span></span>은 어떤 숫자라고
+    가정하고..."라고 얘기하면서 시작한다. 형식적인 증명에서는 <span class="inlinecode"><span class="id" title="tactic">intros</span></span>
+    <span class="inlinecode"><span class="id" title="var">n</span></span>으로 시작한다. 이것은 증명 목표에 있는 그 한정자로부터 <span class="inlinecode"><span class="id" title="var">n</span></span>을
+    현재 가정하는 _문맥_으로 이동시키는 역할을 한다.
+
+<div class="paragraph"> </div>
+
+    키워드들 <span class="inlinecode"><span class="id" title="tactic">intros</span></span>, <span class="inlinecode"><span class="id" title="tactic">simpl</span></span>, <span class="inlinecode"><span class="id" title="tactic">reflexivity</span></span>는 _전술들_
+    예다. 전술이란 <span class="inlinecode"><span class="id" title="keyword">Proof</span></span>와 <span class="inlinecode"><span class="id" title="keyword">Qed</span></span> 사이에서 사용하는 명령으로 우리가
+    만든 어떤 주장을 확인하는 과정을 가이드한다. 이 장의 나머지에서
+    여러 전술들을 더 볼 것이고, 앞으로 공부할 장들에서는 더 많은
+    전술들을 만난 것이다.
+
+<div class="paragraph"> </div>
+
+    다른 유사한 정리들은 동일한 패턴으로 증명할 수 있다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <span class="id" title="var">plus_1_l</span> : <span class="id" title="keyword">∀</span> <span class="id" title="var">n</span>:<span class="id" title="var">nat</span>, 1 + <span class="id" title="var">n</span> = <span class="id" title="var">S</span> <span class="id" title="var">n</span>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">n</span>. <span class="id" title="tactic">reflexivity</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <span class="id" title="var">mult_0_l</span> : <span class="id" title="keyword">∀</span> <span class="id" title="var">n</span>:<span class="id" title="var">nat</span>, 0 × <span class="id" title="var">n</span> = 0.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">n</span>. <span class="id" title="tactic">reflexivity</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+이 정리들의 이름들에서 <span class="inlinecode"><span class="id" title="var">_l</span></span> 접미사는 "왼쪽에"로 읽으면 된다. 
+<div class="paragraph"> </div>
+
+ 이 증명들을 단계별로 따라가며 문맥과 목표가 어떻게 변하는지
+    관찰하면 좋다.  <span class="inlinecode"><span class="id" title="tactic">reflexivity</span></span> 앞에 <span class="inlinecode"><span class="id" title="tactic">simpl</span></span>를 추가해서 동일함을
+    검사하기 전에 낱말들에 콕이 어떤 간략화 과정을 수행하는지 보고
+    싶어할 수도 있다.
+
+<div class="paragraph"> </div>
+
+    간략화 방법은 상당히 강력해서 괘 많은 일반적인 사실들을 증명할 수
+    있지만 이 방법만으로 처리할 수 없는 많은 문장들이 있다. 예를 들어,
+    간략화 방법만으로 <span class="inlinecode">0</span>은 <span class="inlinecode">+</span>의 오른쪽 중성 요소임을 증명할 수 없다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <span class="id" title="var">plus_n_O</span> : <span class="id" title="keyword">∀</span> <span class="id" title="var">n</span>, <span class="id" title="var">n</span> = <span class="id" title="var">n</span> + 0.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">n</span>. <span class="id" title="tactic">simpl</span>. 
+<br/>
+</div>
+
+<div class="doc">
+(왜 이러한 상황이 발생했는지 설명할 수 있나?  콕을 가지고 단계별로
+    두 증명들을 따라가 보고 목표와 문맥이 어떻게 변하는지 확인하시오.)
+
+<div class="paragraph"> </div>
+
+    증명 도중에 막히면 <span class="inlinecode"><span class="id" title="keyword">Abort</span></span> 명령을 사용해 잠시 증명을 포기할 수
+    있다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Abort</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+다음 장에서 _도입_을 소개할 것이다. 이러한 목표를 증명하는데
+    사용할 수 있는 강력한 기법이다. 하지만 몇가지 더 간단한 전술들을
+    잠시 살펴보자. 
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab15"></a><h1 class="section">다시 작성하여 증명하기</h1>
+
+<div class="paragraph"> </div>
+
+ 이 정리는 그동안 보았던 다른 정리들 보다 조금 더 흥미롭다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <span class="id" title="var">plus_id_example</span> : <span class="id" title="keyword">∀</span> <span class="id" title="var">n</span> <span class="id" title="var">m</span>:<span class="id" title="var">nat</span>,<br/>
+&nbsp;&nbsp;<span class="id" title="var">n</span> = <span class="id" title="var">m</span> →<br/>
+&nbsp;&nbsp;<span class="id" title="var">n</span> + <span class="id" title="var">n</span> = <span class="id" title="var">m</span> + <span class="id" title="var">m</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+모든 숫자들 <span class="inlinecode"><span class="id" title="var">n</span></span>과 <span class="inlinecode"><span class="id" title="var">m</span></span>에 대한 전체적 주장이 아니라 <span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" title="var">m</span></span>이 성립할
+    때의 더 특별한 성질에 대해 서술하고 있다. 화살표 기호는
+    "함축한다"라고 읽는다.
+
+<div class="paragraph"> </div>
+
+    이전처럼 그러한 조건을 만족하는 숫자들 <span class="inlinecode"><span class="id" title="var">n</span></span>과 <span class="inlinecode"><span class="id" title="var">m</span></span>이 주어져 있다고
+    가정하고 추론할 필요가 있다. <span class="inlinecode"><span class="id" title="tactic">intros</span></span> 전술은 목표로부터 이 세 가지
+    모두를 현재 문맥의 가정들로 옮기는 역할을 할 것이다.
+
+<div class="paragraph"> </div>
+
+    <span class="inlinecode"><span class="id" title="var">n</span></span>과 <span class="inlinecode"><span class="id" title="var">m</span></span>은 임의의 숫자들이기 때문에 이 정리를 증명하기 위해
+    간략화 방법을 무조건 사용할 수는 없다. 대신에 <span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" title="var">m</span></span>을 가정하면
+    목표 문장에서 <span class="inlinecode"><span class="id" title="var">n</span></span>을 <span class="inlinecode"><span class="id" title="var">m</span></span>을 대체해서 양쪽에 동일한 식으로 구성된
+    등식을 얻을 수 있다는 점을 이용해 증명한다. 콕이 이런 방법으로
+    대체하는 과정을 수행하려면 <span class="inlinecode"><span class="id" title="tactic">rewrite</span></span> 전술을 사용한다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">n</span> <span class="id" title="var">m</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> → <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+증명의 첫 번째 줄에서 전체 한정된 변수들 <span class="inlinecode"><span class="id" title="var">n</span></span>과 <span class="inlinecode"><span class="id" title="var">m</span></span>을 현재 문맥으로
+    옮긴다.  두 번째 줄에서 가정 <span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" title="var">m</span></span>을 이 문맥으로 옮기고 <span class="inlinecode"><span class="id" title="var">H</span></span>라고
+    이름 붙인다.  세 번째 줄은 현재 목적 (<span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" title="var">m</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" title="var">m</span></span>)을 다시
+    작성하여 등식 형태의 가정 <span class="inlinecode"><span class="id" title="var">H</span></span>의 왼편을 오른편으로 대체하도록
+    콕에게 명령한다.
+
+<div class="paragraph"> </div>
+
+    (<span class="inlinecode"><span class="id" title="tactic">rewrite</span></span>의 화살표는 논리적 함축과는 아무 관련이 없고, 단지 콕이
+    왼쪽에서 오른쪽으로 다시 작성하라고 지시하기 위한
+    것이다. 오른쪽에서 왼쪽으로 다시 작성하려면 <span class="inlinecode"><span class="id" title="tactic">rewrite</span></span> <span class="inlinecode">&lt;-</span> 명령을
+    사용하면 된다. 위 증명에서 이렇게 방향을 바꾸어 시도하고 어떤
+    차이점이 생기는지 보라.) 
+<div class="paragraph"> </div>
+
+<a name="lab16"></a><h4 class="section">연습문제: 별 하나 (plus_id_exercise)</h4>
+ "<span class="inlinecode"><span class="id" title="var">Admitted</span>.</span>"를 빼고 증명을 채워넣으시오. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <span class="id" title="var">plus_id_exercise</span> : <span class="id" title="keyword">∀</span> <span class="id" title="var">n</span> <span class="id" title="var">m</span> <span class="id" title="var">o</span> : <span class="id" title="var">nat</span>,<br/>
+&nbsp;&nbsp;<span class="id" title="var">n</span> = <span class="id" title="var">m</span> → <span class="id" title="var">m</span> = <span class="id" title="var">o</span> → <span class="id" title="var">n</span> + <span class="id" title="var">m</span> = <span class="id" title="var">m</span> + <span class="id" title="var">o</span>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+ <span class="id" title="var">Admitted</span>.<br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+<div class="paragraph"> </div>
+
+ 콕에게, 우리가 이 정리를 증명하는 것을 생략하니 이 증명을 단지 현
+    상황대로 받아들이도록 <span class="inlinecode"><span class="id" title="var">Admitted</span></span> 명령을 내린다. 이 명령은 더 길게
+    증명해야 할 때 유용할 수 있다. 왜냐하면 더 넓은 주장을 하기 위해
+    유용하다고 믿는 보조 정리들을 서술할 수 있기
+    때문이다. <span class="inlinecode"><span class="id" title="var">Admitted</span></span>를 사용해서 일단 의심하지 않고 증명들을
+    받아들이고 그 증명들이 성립할 때까지 주요 주장에 관해 작업을
+    계속한다. 그런 다음 돌아가서 생략했던 증명들을 채운다. 하지만
+    <span class="inlinecode"><span class="id" title="var">Admitted</span></span>를 사용할 때마다 완전히 무의미한 내용을 콕이 형식적으로
+    정밀하게 검증하는 세상에 들인다는 것을 주의해야 한다! 
+<div class="paragraph"> </div>
+
+ 현재 문맥의 가정 대신에 이전에 증명된 정리를 가지고 <span class="inlinecode"><span class="id" title="tactic">rewrite</span></span>
+    전술을 사용할 수도 있다. 이전에 증명한 정리의 문장에 한정 변수들이
+    포함되어 있다면 (아래 예제처럼) 콕은 현재 목적에 맞추어 이
+    변수들이 가졌으면 하는 내용을 찾는다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <span class="id" title="var">mult_0_plus</span> : <span class="id" title="keyword">∀</span> <span class="id" title="var">n</span> <span class="id" title="var">m</span> : <span class="id" title="var">nat</span>,<br/>
+&nbsp;&nbsp;(0 + <span class="id" title="var">n</span>) × <span class="id" title="var">m</span> = <span class="id" title="var">n</span> × <span class="id" title="var">m</span>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">n</span> <span class="id" title="var">m</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> → <span class="id" title="var">plus_O_n</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab17"></a><h4 class="section">연습문제: 별 두 개 (mult_S_1)</h4>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Theorem</span> <span class="id" title="var">mult_S_1</span> : <span class="id" title="keyword">∀</span> <span class="id" title="var">n</span> <span class="id" title="var">m</span> : <span class="id" title="var">nat</span>,<br/>
+&nbsp;&nbsp;<span class="id" title="var">m</span> = <span class="id" title="var">S</span> <span class="id" title="var">n</span> →<br/>
+&nbsp;&nbsp;<span class="id" title="var">m</span> × (1 + <span class="id" title="var">n</span>) = <span class="id" title="var">m</span> × <span class="id" title="var">m</span>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+ <span class="id" title="var">Admitted</span>.<br/>
+
+<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab18"></a><h1 class="section">경우 별 분석을 통한 증명</h1>
+
+<div class="paragraph"> </div>
+
+ 물론 단순 계산과 다시 쓰기로 모든 것을 증명할 수 있는 것은 아니다. 일반적으로
+    알려지지 않은 가정하는 값들 (임의의 숫자들, 부울 값들, 리스트들, 등등)은
+    간략화를 못하게 막을 수 있다. 예를 들어, <span class="inlinecode"><span class="id" title="tactic">simpl</span></span> 전술을 사용하여 위와 같이 
+    다음 사실을 증명하려고 하면 막히게 된다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <span class="id" title="var">plus_1_neq_0_firsttry</span> : <span class="id" title="keyword">∀</span> <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>,<br/>
+&nbsp;&nbsp;<span class="id" title="var">beq_nat</span> (<span class="id" title="var">n</span> + 1) 0 = <span class="id" title="var">false</span>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>. <span class="id" title="keyword">Abort</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+그 이유는 <span class="inlinecode"><span class="id" title="var">beq_nat</span></span>과 <span class="inlinecode">+</span>의 두 정의들이 첫 번째 인자에 대하여
+    <span class="inlinecode"><span class="id" title="keyword">match</span></span>를 수행하면서 시작하기 때문이다. 그러나 여기에서 <span class="inlinecode">+</span>의 첫
+    번째 인자는 알려지지 않은 숫자 <span class="inlinecode"><span class="id" title="var">n</span></span>이고 <span class="inlinecode"><span class="id" title="var">beq_nat</span></span>의 첫 번째 인자는
+    복합식 <span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode">+</span> <span class="inlinecode">1</span>이다.  어느 것도 간략화될 수 없다.
+
+<div class="paragraph"> </div>
+
+    진행하기 위해 <span class="inlinecode"><span class="id" title="var">n</span></span>의 가능한 형태들을 분리해서 고려할 필요가
+    있다. 만일 <span class="inlinecode"><span class="id" title="var">n</span></span>이 <span class="inlinecode"><span class="id" title="var">O</span></span>이면 <span class="inlinecode"><span class="id" title="var">beq_nat</span></span> <span class="inlinecode">(<span class="id" title="var">n</span></span> <span class="inlinecode">+</span> <span class="inlinecode">1)</span> <span class="inlinecode">0</span>의 최종 결과를 계산할
+    수 있고 그 결과는 <span class="inlinecode"><span class="id" title="var">fasle</span></span>라고 확인할 수 있다.  그리고 만일 어떤
+    <span class="inlinecode"><span class="id" title="var">n'</span></span>에 대해 <span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" title="var">S</span></span> <span class="inlinecode"><span class="id" title="var">n'</span></span>이라면 비록 숫자 <span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode">+</span> <span class="inlinecode">1</span>이 정확히 무엇인지
+    모르지만 최종 결과가 적어도 하나의 <span class="inlinecode"><span class="id" title="var">S</span></span>를 가지고 시작한다고 계산할
+    수 있다. 이 사실을 이용하면 다시 <span class="inlinecode"><span class="id" title="var">beq_nat</span></span> <span class="inlinecode">(<span class="id" title="var">n</span></span> <span class="inlinecode">+</span> <span class="inlinecode">1)</span> <span class="inlinecode">0</span>이 <span class="inlinecode"><span class="id" title="var">false</span></span>라고
+    계산할 수 있다.
+
+<div class="paragraph"> </div>
+
+    콕이 <span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" title="var">O</span></span>와 <span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" title="var">S</span></span> <span class="inlinecode"><span class="id" title="var">n'</span></span> 경우 별로 분리해서 고려하도록 지시하는
+    전술은 <span class="inlinecode"><span class="id" title="tactic">destruct</span></span>이다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <span class="id" title="var">plus_1_neq_0</span> : <span class="id" title="keyword">∀</span> <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>,<br/>
+&nbsp;&nbsp;<span class="id" title="var">beq_nat</span> (<span class="id" title="var">n</span> + 1) 0 = <span class="id" title="var">false</span>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">n</span>. <span class="id" title="tactic">destruct</span> <span class="id" title="var">n</span> <span class="id" title="keyword">as</span> [| <span class="id" title="var">n'</span>].<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">reflexivity</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<span class="inlinecode"><span class="id" title="tactic">destruct</span></span>는 _두 개_의 부분 목표들을 만들고, 콕으로 하여금 이
+    정리를 받아들이도록 우리는 각각 증명해서 해야 한다. 주석 "<span class="inlinecode"><span class="id" title="keyword">as</span></span> <span class="inlinecode">[|</span>
+    <span class="inlinecode"><span class="id" title="var">n'</span>]</span>"을 _도입 패턴_이라 부른다. 각 부분 목표에서 콕이 도입할 변수
+    이름들을 지정해준다. 이 주석의 대괄호들 사이에 <span class="inlinecode">|</span>로 분리된 이름들
+    _리스트의 리스트_가 온다. 위 증명의 경우 첫 번째 요소는 <span class="inlinecode"><span class="id" title="var">O</span></span>
+    생성자는 인자를 받지 않기 때문에 비어있다. 두 번째 요소는 <span class="inlinecode"><span class="id" title="var">n'</span></span>
+    이름을 지정했는데 <span class="inlinecode"><span class="id" title="var">S</span></span>는 단항 생성자이기 때문이다.
+
+<div class="paragraph"> </div>
+
+    두 번째와 세 번째 줄들에 <span class="inlinecode">-</span> 부호들을 _불릿 표시들_이라고 부르는데
+    각각 생성된 부분 목표에 해당하는 증명 부분들을 표시한다. 불릿
+    다음에 오는 증명 스크립트는 하나의 부분 목표에 대한 증명 전체에
+    해당한다.  이 예에서는 각 부분 목표는 <span class="inlinecode"><span class="id" title="tactic">reflexivity</span></span>를 한 번
+    사용해서 간략화하여 쉽게 증명할 수 있다. 예를 들어 첫 번째는 <span class="inlinecode">(<span class="id" title="var">S</span></span>
+    <span class="inlinecode"><span class="id" title="var">n'</span></span> <span class="inlinecode">+</span> <span class="inlinecode">1)</span>을 <span class="inlinecode"><span class="id" title="var">S</span></span> <span class="inlinecode">(<span class="id" title="var">n'</span></span> <span class="inlinecode">+</span> <span class="inlinecode">1)</span>로 먼저 고쳐 작성하고 <span class="inlinecode"><span class="id" title="var">beq_nat</span></span>을 펼친
+    다음, <span class="inlinecode"><span class="id" title="keyword">match</span></span>를 간략화하여 <span class="inlinecode"><span class="id" title="var">beq_nat</span></span> <span class="inlinecode">(<span class="id" title="var">S</span></span> <span class="inlinecode"><span class="id" title="var">n'</span></span> <span class="inlinecode">+</span> <span class="inlinecode">1)</span> <span class="inlinecode">0</span>을 <span class="inlinecode"><span class="id" title="var">false</span></span>로
+    간략화한다.
+
+<div class="paragraph"> </div>
+
+    불릿들로 각 경우들을 표시하는 것은 완전히 선택 사항이다. 만약
+    불릿들이 없으면 콕은 단순히 각 부분 목표를 차례로 한 번에 하나씩
+    증명하도록 요청할 것이다. 그럼에도 불구하고 불릿들을 사용하는 것이
+    좋다. 그 이유는 증명의 구조를 명백하게 만들어 더 읽기 쉽게
+    만든다. 또 다른 이유는 블릿들로 하나의 부분 목표가 끝난 후에 다음
+    목표를 검증하도록 콕에게 지시하여 다른 부분 목표들에 대한 증명들이
+    마구 섞이는 것을 막을 수 있기 때문이다. 이 문제들은 대규모 증명을
+    개발할 때 특별히 중요해진다. 이러한 증명에서는 쉽게 깨질 수 있는
+    증명들로 인해 디버깅 시간이 길어질 수 있다.
+
+<div class="paragraph"> </div>
+
+    콕에서 증명을 어떻게 구성할지, 특히 어디에서 줄 바꿈을 하고 증명의
+    섹션들을 어떻게 들여 쓰기 해서 내포된 구조를 표시할지에 대한
+    확고하고 빠른 규칙은 없다. 하지만 만일 여러 부분 목표들이 생성되는
+    곳을 명시적으로 불릿들로 그 시작 줄들을 표시하면 이 증명의
+    레이아웃을 어떻게 하더라도 거의 상관없이 읽기 쉬울 것이다.
+
+<div class="paragraph"> </div>
+
+    또한 줄 길이에 대한 다소 명백한 충고를 하기에 적절한듯 하다. 초보
+    콕 사용자들은 한 줄에 각 전술을 작성하거나 한 줄에 전체 증명을
+    작성하는 양 극단을 때때로 취하곤 한다. 이 양 극단의 중간이 좋은
+    스타일이다. 한가지 합리적인 습관은 80자 줄들로 나누는 것이다.
+
+<div class="paragraph"> </div>
+
+    <span class="inlinecode"><span class="id" title="tactic">destruct</span></span> 전술은 모든 귀납적으로 정의한 자료형과 함께 사용할 수
+    있다. 예를 들어, 부울 부정은 그 자신이 역함수라는 것(involutive)을
+    증명할 때 사용한다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <span class="id" title="var">negb_involutive</span> : <span class="id" title="keyword">∀</span> <span class="id" title="var">b</span> : <span class="id" title="var">bool</span>,<br/>
+&nbsp;&nbsp;<span class="id" title="var">negb</span> (<span class="id" title="var">negb</span> <span class="id" title="var">b</span>) = <span class="id" title="var">b</span>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">b</span>. <span class="id" title="tactic">destruct</span> <span class="id" title="var">b</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">reflexivity</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+여기에서 <span class="inlinecode"><span class="id" title="tactic">destruct</span></span>는 <span class="inlinecode"><span class="id" title="keyword">as</span></span> 절을 가지고 있지 않은데 <span class="inlinecode"><span class="id" title="tactic">destruct</span></span>로
+    인해 생성된 어떠한 부분 경우들도 변수들과 연결될 필요가 없기
+    때문이다. 그래서 이름을 지정할 필요가 없다. (<span class="inlinecode"><span class="id" title="keyword">as</span></span> <span class="inlinecode">[|]</span>나 <span class="inlinecode"><span class="id" title="keyword">as</span></span> <span class="inlinecode">[]</span>와
+    같이 작성할 수 있긴 하다.) 사실 _어떠한_ <span class="inlinecode"><span class="id" title="tactic">destruct</span></span>에서도 <span class="inlinecode"><span class="id" title="keyword">as</span></span> 절을
+    생략할 수 있다. 그러면 콕은 변수 이름 들을 자동으로 채워 넣을 것이다.
+    일반적으로 이것은 나쁜 스타일일로 간주한다. 왜냐하면 콕이 자동으로 선택하면
+    혼동스러운 이름을 만들 수 있기 때문이다.
+
+<div class="paragraph"> </div>
+
+    부분 목표 안에서 <span class="inlinecode"><span class="id" title="tactic">destruct</span></span> 명령을 내리면 한층 더 많이 성립해야 할
+    명제들을 생성하면서 때때로 유용하다. 이런 경우 다른 "층들"의
+    목적들을 표시하기 위해 다른 종류의 불릿들을 사용한다. 예를 들어,
+    
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <span class="id" title="var">andb_commutative</span> : <span class="id" title="keyword">∀</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span>, <span class="id" title="var">andb</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> = <span class="id" title="var">andb</span> <span class="id" title="var">c</span> <span class="id" title="var">b</span>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span>. <span class="id" title="tactic">destruct</span> <span class="id" title="var">b</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">destruct</span> <span class="id" title="var">c</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">destruct</span> <span class="id" title="var">c</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">reflexivity</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<span class="inlinecode"><span class="id" title="tactic">reflexivity</span></span>의 각 쌍은 바로 위의 <span class="inlinecode"><span class="id" title="tactic">destruct</span></span> <span class="inlinecode"><span class="id" title="var">c</span></span>를 실행해서 생성된
+    부분 목적들에 해당한다. 
+<div class="paragraph"> </div>
+
+ <span class="inlinecode">-</span>와 <span class="inlinecode">+</span> 외에도 <span class="inlinecode">×</span> (별표)를 세 번째 종류의 불릿으로 사용할 수
+    있다.  중괄호들로 부분 증명들을 감쌀 수도 있다. 이 형식은 세 단계
+    이상의 부분 목적들을 생성하는 증명을 해야 할 경우 유용하다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <span class="id" title="var">andb_commutative'</span> : <span class="id" title="keyword">∀</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span>, <span class="id" title="var">andb</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> = <span class="id" title="var">andb</span> <span class="id" title="var">c</span> <span class="id" title="var">b</span>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span>. <span class="id" title="tactic">destruct</span> <span class="id" title="var">b</span>.<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">destruct</span> <span class="id" title="var">c</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">reflexivity</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">reflexivity</span>. } }<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">destruct</span> <span class="id" title="var">c</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">reflexivity</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">reflexivity</span>. } }<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+중괄호들은 증명의 시작과 끝을 표시하기 때문에 이 예제에서 보여주는
+    것처럼 다중 부분 목적 단계들을 위해 사용할 수 있다. 더욱이
+    중괄호를 사용하면 여러 단계 증명에서 동일한 불릿 모양을 재사용할
+    수 있다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <span class="id" title="var">andb3_exchange</span> :<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">∀</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span>, <span class="id" title="var">andb</span> (<span class="id" title="var">andb</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span>) <span class="id" title="var">d</span> = <span class="id" title="var">andb</span> (<span class="id" title="var">andb</span> <span class="id" title="var">b</span> <span class="id" title="var">d</span>) <span class="id" title="var">c</span>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span>. <span class="id" title="tactic">destruct</span> <span class="id" title="var">b</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">destruct</span> <span class="id" title="var">c</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">destruct</span> <span class="id" title="var">d</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">reflexivity</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">destruct</span> <span class="id" title="var">d</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">reflexivity</span>. }<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">destruct</span> <span class="id" title="var">c</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">destruct</span> <span class="id" title="var">d</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">reflexivity</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">destruct</span> <span class="id" title="var">d</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">reflexivity</span>. }<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+이 장을 마치기 전에 마지막 편리한 방법을 언급한다. 아마도 이미 봤을 것과 같이
+    많은 증명들에서 변수를 도입한 다음에 경우 별로 분석한다. 
+
+<div class="paragraph"> </div>
+
+        intros x y. destruct y as <span class="inlinecode">|<span class="id" title="var">y</span></span>.
+
+<div class="paragraph"> </div>
+
+    이 패턴은 아주 흔하기 때문에 콕은 짧은 방법을 제공한다. 변수 이름을 도입할 때
+    변수 이름 대신 도입 패턴을 사용하여 경우 별 분석을 수행할 수 있다. 예를 들어,
+    위 <span class="inlinecode"><span class="id" title="var">plus_1_neq_0</span></span> 정리를 더 간단하게 증명할 수 있다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <span class="id" title="var">plus_1_neq_0'</span> : <span class="id" title="keyword">∀</span> <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>,<br/>
+&nbsp;&nbsp;<span class="id" title="var">beq_nat</span> (<span class="id" title="var">n</span> + 1) 0 = <span class="id" title="var">false</span>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> [|<span class="id" title="var">n</span>].<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">reflexivity</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+만일 이름을 붙일 인자가 없으면 <span class="inlinecode">[]</span>라고 쓰면 된다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <span class="id" title="var">andb_commutative''</span> :<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">∀</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span>, <span class="id" title="var">andb</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> = <span class="id" title="var">andb</span> <span class="id" title="var">c</span> <span class="id" title="var">b</span>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> [] [].<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">reflexivity</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab19"></a><h4 class="section">연습문제: 별 두 개 (andb_true_elim2)</h4>
+ 다음 주장을 증명하되 <span class="inlinecode"><span class="id" title="tactic">destruct</span></span>을 사용할 때 불릿들을 가지고
+    각 경우들(그리고 부분 경우들)을 표시하시오. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <span class="id" title="var">andb_true_elim2</span> : <span class="id" title="keyword">∀</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">bool</span>,<br/>
+&nbsp;&nbsp;<span class="id" title="var">andb</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> = <span class="id" title="var">true</span> → <span class="id" title="var">c</span> = <span class="id" title="var">true</span>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+ <span class="id" title="var">Admitted</span>.<br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+<div class="paragraph"> </div>
+
+<a name="lab20"></a><h4 class="section">연습문제: 별 한 개 (zero_nbeq_plus_1)</h4>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Theorem</span> <span class="id" title="var">zero_nbeq_plus_1</span> : <span class="id" title="keyword">∀</span> <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>,<br/>
+&nbsp;&nbsp;<span class="id" title="var">beq_nat</span> 0 (<span class="id" title="var">n</span> + 1) = <span class="id" title="var">false</span>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+ <span class="id" title="var">Admitted</span>.<br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab21"></a><h2 class="section">표기법에 관한 부언 (선택 사항)</h2>
+
+<div class="paragraph"> </div>
+
+ (일반적으로 선택 사항으로 표시된 섹션들은, 다른 선택 사항 섹션들을
+    제외하고 이 책을 따라가는데 필요하지 않다. 처음 읽을 때는 나중에
+    참고할 필요가 있을 때 여기에 무엇이 있는지 정도를 알 수 있도록 이
+    섹션들을 대충 읽기를 원할 수도 있다.)
+
+<div class="paragraph"> </div>
+
+    중위 연산자 덧셈과 곱셈에 대한 표기법을 다시 떠올려보자. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Notation</span> &quot;x + y" := (<span class="id" title="var">plus</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 50, <span class="id" title="tactic">left</span> <span class="id" title="keyword">associativity</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <span class="id" title="var">nat_scope</span>.<br/>
+<span class="id" title="keyword">Notation</span> &quot;x * y" := (<span class="id" title="var">mult</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 40, <span class="id" title="tactic">left</span> <span class="id" title="keyword">associativity</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <span class="id" title="var">nat_scope</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+콕의 표기법 기호를 위해 _우선순위 단계_와 _결합성_을 지정할 수
+    있다.  우선순위 단계 <span class="inlinecode"><span class="id" title="var">n</span></span>은 <span class="inlinecode"><span class="id" title="tactic">at</span></span> <span class="inlinecode"><span class="id" title="keyword">level</span></span> <span class="inlinecode"><span class="id" title="var">n</span></span>으로 작성하여 지정한다. 이
+    것은 콕이 복잡한 식들의 구조를 분석할 때(파싱 할 때)
+    필요하다. 결합성 설정은 동일한 기호가 여러 번 나타나는 식들을
+    모호하지 않게 구조를 분석할 때 사용된다. 예를 들어 <span class="inlinecode">+</span>와 <span class="inlinecode">×</span>에
+    대해 위에서 지정한 패러미터들은 <span class="inlinecode">1+2*384</span>라는 식은
+    <span class="inlinecode">(1+((2*3)*4))</span>을 괄호 없이 짧게 작성한 것임을 분석하도록 도와준다.
+    콕은 우선순위 단계로 0부터 100을 사용하고, _왼쪽_, _오른쪽_,
+    _결합성 없음_을 사용한다. 이 것에 대한 더 많은 예제들을 나중에, 예를 들어
+    리스트 장에서, 볼 것이다. 
+
+<div class="paragraph"> </div>
+
+    각 표기법 기호는 _표기법 유효 범위_와도 연관되어 있다. 콕은
+    문맥에서 유효 범위를 추측한다. <span class="inlinecode"><span class="id" title="var">S</span></span> <span class="inlinecode">(<span class="id" title="var">O</span>×<span class="id" title="var">O</span>)</span>에 대해 <span class="inlinecode"><span class="id" title="var">nat_scope</span></span>라고
+    추측하고, 데카르트 곱(튜플) 타입 <span class="inlinecode"><span class="id" title="var">bool</span>×<span class="id" title="var">bool</span></span> (이후 장들에서 설명할
+    것이다)에 대해 <span class="inlinecode"><span class="id" title="var">type_scope</span></span>라고 알아낸다. 때때로 퍼센트 표기법을
+    사용하여 <span class="inlinecode">(<span class="id" title="var">x</span>×<span class="id" title="var">y</span>)%<span class="id" title="var">nat</span></span>라고 작성해서 콕이 유효 범위를 추측하는 것을
+    도와줄 필요가 있고, 콕이 출력할 때 <span class="inlinecode">%<span class="id" title="var">nat</span></span>을 사용하여 표기법이
+    포함된 유효 범위를 표시하기도 한다.
+
+<div class="paragraph"> </div>
+
+    표기법 유효 범위들은 숫자 표기법(<span class="inlinecode">3</span>, <span class="inlinecode">4</span>, <span class="inlinecode">5</span>, 등등)에도
+    적용한다.  때때로 <span class="inlinecode">0%<span class="id" title="var">nat</span></span>을 볼 수 있는데 <span class="inlinecode"><span class="id" title="var">O</span></span> (이 장에서 사용한
+    자연수 <span class="inlinecode">0</span>)이다.  <span class="inlinecode">0%<span class="id" title="var">Z</span></span>는 정수 영(표준 라이브러리의 다른 부분에
+    있는)이다.
+
+<div class="paragraph"> </div>
+
+    고급 팁: 콕의 표기법 방법은 특별히 강력하지는 않다. 이 방법에 너무
+    많은 기대를 하지 말라! 
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab22"></a><h2 class="section">고정점과 구조적 재귀 (선택 사항)</h2>
+
+<div class="paragraph"> </div>
+
+ 덧셈 정의를 아래 복사해놓았다. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Fixpoint</span> <span class="id" title="var">plus'</span> (<span class="id" title="var">n</span> : <span class="id" title="var">nat</span>) (<span class="id" title="var">m</span> : <span class="id" title="var">nat</span>) : <span class="id" title="var">nat</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">n</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">O</span> ⇒ <span class="id" title="var">m</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">S</span> <span class="id" title="var">n'</span> ⇒ <span class="id" title="var">S</span> (<span class="id" title="var">plus'</span> <span class="id" title="var">n'</span> <span class="id" title="var">m</span>)<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+콕이 이 정의 검사할 때 <span class="inlinecode"><span class="id" title="var">plus'</span></span>는 "첫 번째 인자에 대해 감소"한다고
+    설명할 것이다. 이 것은 인자 <span class="inlinecode"><span class="id" title="var">n</span></span>에 대한 _구조적 재귀_를 수행한다는
+    것이다.  즉, 오직 <span class="inlinecode"><span class="id" title="var">n</span></span>의 더 작은 값들에 대해서만 재귀 함수를
+    호출한다는 뜻이다. 이 것은 <span class="inlinecode"><span class="id" title="var">plus'</span></span>의 모든 호출은 궁극적으로 종료할
+    것을 함축한다. 콕에서는 _모든_ <span class="inlinecode"><span class="id" title="keyword">Fixpoint</span></span> 정의의 어떤 인자는
+    "감소"해야 한다.
+
+<div class="paragraph"> </div>
+
+    이 요구사항은 콕 설계의 기초적인 특징으로, 특히, 콕에서 정의할 수
+    있는 모든 함수는 모든 입력에 대해 종료할 것임을 보장한다. 하지만
+    콕은 그다지 복잡하게 "감소 여부를 분석"하지 않기 때문에 때로는
+    다소 부자연스럽게 함수들을 작성해야 할 필요가 있다. 
+<div class="paragraph"> </div>
+
+<a name="lab23"></a><h4 class="section">연습문제: 별 두 개, 선택 사항 (decreasing)</h4>
+ 구체적으로 이해하기 위해, 모든 입력들에 대해 _종료하는_ (가령,
+    숫자에 대한 간단한 함수의) 정의이지만 이러한 제약 사항으로 콕이
+    거절하는 의미 있는 <span class="inlinecode"><span class="id" title="keyword">Fixpoint</span></span> 정의를 작성해보시오. 
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab24"></a><h1 class="section">추가 연습문제들</h1>
+
+<div class="paragraph"> </div>
+
+<a name="lab25"></a><h4 class="section">연습문제: 별 두 개 (boolean_functions)</h4>
+
+<div class="paragraph"> </div>
+
+ 지금까지 배운 전술들을 사용하여 부울 함수들에 대한 다음 정의를 증명하시오. 
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <span class="id" title="var">identity_fn_applied_twice</span> :<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">∀</span> (<span class="id" title="var">f</span> : <span class="id" title="var">bool</span> → <span class="id" title="var">bool</span>),<br/>
+&nbsp;&nbsp;(<span class="id" title="keyword">∀</span> (<span class="id" title="var">x</span> : <span class="id" title="var">bool</span>), <span class="id" title="var">f</span> <span class="id" title="var">x</span> = <span class="id" title="var">x</span>) →<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">∀</span> (<span class="id" title="var">b</span> : <span class="id" title="var">bool</span>), <span class="id" title="var">f</span> (<span class="id" title="var">f</span> <span class="id" title="var">b</span>) = <span class="id" title="var">b</span>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+ <span class="id" title="var">Admitted</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+이전 정리와 유사하지만 함수 <span class="inlinecode"><span class="id" title="var">f</span></span>가 <span class="inlinecode"><span class="id" title="var">f</span></span> <span class="inlinecode"><span class="id" title="var">x</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" title="var">negb</span></span> <span class="inlinecode"><span class="id" title="var">x</span></span> 성질을 가지고
+    있다는 두 번째 가정을 갖춘 <span class="inlinecode"><span class="id" title="var">negation_fn_applied_twice</span></span> 정리를
+    기술하고 증명하시오 
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+<div class="paragraph"> </div>
+
+<a name="lab26"></a><h4 class="section">연습문제: 별 세 개, 선택 사항 (andb_eq_orb)</h4>
+ 다음 정리를 증명하시오. (힌트: 접근 방법에 따라 약간 까다로울 수
+    있다.  분명히 <span class="inlinecode"><span class="id" title="tactic">destruct</span></span>와 <span class="inlinecode"><span class="id" title="tactic">rewrite</span></span> 둘 다 필요할 것이지만 보이는
+    모든 것을 분해하는 방법은 최선은 아니다.) 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <span class="id" title="var">andb_eq_orb</span> :<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">∀</span> (<span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">bool</span>),<br/>
+&nbsp;&nbsp;(<span class="id" title="var">andb</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> = <span class="id" title="var">orb</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span>) →<br/>
+&nbsp;&nbsp;<span class="id" title="var">b</span> = <span class="id" title="var">c</span>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+ <span class="id" title="var">Admitted</span>.<br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+<div class="paragraph"> </div>
+
+<a name="lab27"></a><h4 class="section">연습문제: 별 세 개 (binary)</h4>
+
+<div class="paragraph"> </div>
+
+ 자연수를 표현하는 다른 더 효율적인 방법을 생각해보자. 즉, 각 자연수를 영 또는
+    어떤 자연수의 다음이라고 말하는 대신 각 이항 숫자를 아래와 같이 말할 수 있다.
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> 영
+
+</li>
+<li> 어떤 이항 숫자의 두 배
+
+</li>
+<li> 어떤 이항 숫자의 두 배 더 하기 일 
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+    (a) 첫째, 위의 설명에 부합하도록 타입 <span class="inlinecode"><span class="id" title="var">bin</span></span>의 귀납적 정의를
+        작성하시오.
+
+<div class="paragraph"> </div>
+
+    (힌트: 위의 <span class="inlinecode"><span class="id" title="var">nat</span></span>의 정의를 살펴보면,
+
+<div class="paragraph"> </div>
+
+         Inductive nat : Type := | O : nat | S : nat -&gt; nat.
+
+<div class="paragraph"> </div>
+
+    <span class="inlinecode"><span class="id" title="var">O</span></span>와 <span class="inlinecode"><span class="id" title="var">S</span></span>가 "의미"하는 것에 대해 아무것도 얘기하고 있지 않다. 단지
+    "<span class="inlinecode"><span class="id" title="var">O</span></span>는 <span class="inlinecode"><span class="id" title="var">nat</span></span>이라 부르는 집합의 원소이고, <span class="inlinecode"><span class="id" title="var">n</span></span>이 이 집합에 있으면 <span class="inlinecode"><span class="id" title="var">S</span></span>
+    <span class="inlinecode"><span class="id" title="var">n</span></span>도 있다"라고 기술한다. <span class="inlinecode"><span class="id" title="var">O</span></span>를 영으로 <span class="inlinecode"><span class="id" title="var">S</span></span>를 다음 숫자/더하기 일로
+    해석하는 것은 <span class="inlinecode"><span class="id" title="var">nat</span></span> 값들을 _사용_하는 방법에서 정해진다. 이
+    원소들을 가지고 무언가를 하는 함수를 작성하고, 이 원소들에 대해
+    무언가를 증명하고, 등등과 같은 방법에 의해 정해진다. <span class="inlinecode"><span class="id" title="var">bin</span></span>의
+    정의에 수학적 의미를 부여하는 것은 그 다음에 작성할 함수들이기
+    때문에 <span class="inlinecode"><span class="id" title="var">bin</span></span>을 그에 맞추어 간단하게 정의해야 한다.)
+
+<div class="paragraph"> </div>
+
+    (b) 다음으로, 이항 숫자들에 대한 증가 함수 <span class="inlinecode"><span class="id" title="var">incr</span></span>을 작성하고 이 숫자들을
+        단항 숫자들로 변환하는 <span class="inlinecode"><span class="id" title="var">bin_to_nt</span></span> 함수를 작성하시오.
+
+<div class="paragraph"> </div>
+
+    (c) 증가 하수와 이항 수를 단항 수로 변환하는 함수들에 대해 다섯
+        개의 유닛 테스트로 <span class="inlinecode"><span class="id" title="var">test_bin_incr1</span></span>, <span class="inlinecode"><span class="id" title="var">test_bin_incr2</span></span>, 등을
+        작성하시오. (콕에서 "유닛 테스트"는 그 동안 여러 정의들에 대해
+        해온 것 처럼 단순히 <span class="inlinecode"><span class="id" title="tactic">reflexivity</span></span>로 증명할 수 있는 특정
+        <span class="inlinecode"><span class="id" title="keyword">Example</span></span>이다. 예를 들어, 이항 수를 증가하고 그 다음에 단항
+        수로 변환하면 먼저 단항 수로 변환하고 나중에 증가하는 것과
+        동일한 결과를 내야 한다. 
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<font size=-2>&#9744;</font> 
+<div class="paragraph"> </div>
+
+  
+</div>
+<div class="code">
+
+<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>
