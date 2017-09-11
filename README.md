@@ -1,4 +1,4 @@
 # sf
 Software Foundations (a translation)
- - HTML files http://wp.me/p8iD4w-pd
+ - http://swlab.jnu.ac.kr/wordpress/2017/08/22/software-foundations-with-coq/
  
